@@ -4,10 +4,12 @@
   "description": "",
   "license": "ISC",
   "author": "r0ginskiy",
-  "type": "commonjs",
+  "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "test": "npm test"
+    "start": "node src/index.js",
+    "cli": "node src/cli.js",
+    "test": "jest"
   },
   "directories": {
     "doc": "docs"
