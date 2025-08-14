@@ -1,3 +1,6 @@
+import { logger } from './utils/logger.js';
+
 export function scrapeVideos(urls) {
-  console.log('Received URLs:', urls);
+  logger.info(`Received ${urls.length} URLs`);
+  urls.forEach(url => logger.info(`Processing: ${url}`));
 }

@@ -7,3 +7,4 @@ export const config = {
   csvFile: path.resolve("metadata", "videos.csv"),
   jsonFile: path.resolve("metadata", "videos.json"),
 };
+ 
