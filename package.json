@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node src/index.js",
     "cli": "node src/cli.js",
-    "test": "jest"
+    "test": "set NODE_OPTIONS=--experimental-vm-modules && jest"
   },
   "directories": {
     "doc": "docs"

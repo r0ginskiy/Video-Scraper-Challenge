@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { logger } from './logger.js';
+import fs from "fs";
+import path from "path";
+import { logger } from "./logger.js";
 
 export function ensureDir(dirPath) {
   if (!fs.existsSync(dirPath)) {
@@ -9,10 +9,7 @@ export function ensureDir(dirPath) {
   }
 }
 
-export function fileExists(filePath) {
-  return fs.existsSync(filePath);
-}
-
-export function getSafeFilePath(dir, fileName) {
-  return path.resolve(dir, fileName);
+export function getSafeFilePath(dir, filename) {
+  const safeName = filename.replace(/[<>:"/\\|?*]/g, "_");
+  return path.join(dir, safeName);
 }
