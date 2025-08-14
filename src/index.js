@@ -1,7 +1,10 @@
-import { logger } from "./utils/logger.js";
-import { ensureDir } from "./utils/fileHelper.js";
-import { saveMetadataJSON, saveMetadataCSV } from "./utils/metadataParser.js";
-import { config } from "./config/index.js";
+import { logger } from './utils/logger.js';
+import { ensureDir } from './utils/fileHelper.js';
+import { saveMetadataJSON, saveMetadataCSV } from './utils/metadataParser.js';
+import { config } from './config/index.js';
+import { downloadVideo } from './services/scraper.js';
+import fs from 'fs';
+import path from 'path';
 
 export async function scrapeVideos(urls) {
   ensureDir(config.videosDir);
@@ -9,13 +12,31 @@ export async function scrapeVideos(urls) {
 
   logger.info(`Received ${urls.length} URLs`);
 
-  const dummyMetadata = urls.map((url, idx) => ({
-    url,
-    title: `Test video ${idx + 1}`,
-    duration: "00:01:00",
-    resolution: "1920x1080",
-  }));
+  const metadata = [];
+  const failed = [];
 
-  saveMetadataJSON(dummyMetadata);
-  await saveMetadataCSV(dummyMetadata);
+  for (let i = 0; i < urls.length; i++) {
+    try {
+      const data = await downloadVideo(urls[i].trim(), i);
+      metadata.push(data);
+
+      if (data.status !== 'success') {
+        failed.push(data);
+      }
+    } catch (err) {
+      logger.error(`Error downloading ${urls[i]}: ${err.message}`);
+      failed.push({ url: urls[i], status: 'failed', error: err.message });
+    }
+  }
+
+  saveMetadataJSON(metadata);
+  await saveMetadataCSV(metadata);
+
+  if (failed.length > 0) {
+    const failedPath = path.join(config.metadataDir, 'failed.json');
+    fs.writeFileSync(failedPath, JSON.stringify(failed, null, 2));
+    logger.warn(`Some videos failed. See ${failedPath}`);
+  }
+
+  logger.info(`Downloaded: ${metadata.filter(v => v.status === 'success').length}, Failed: ${failed.length}`);
 }
