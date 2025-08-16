@@ -1,9 +1,16 @@
 import { jest } from "@jest/globals";
+import fs from "fs";
+
 
 const spawnMock = jest.fn();
 jest.unstable_mockModule("child_process", () => ({
   spawn: spawnMock,
 }));
+
+jest.spyOn(fs, "existsSync").mockReturnValue(true);
+jest
+  .spyOn(fs, "statSync")
+  .mockReturnValue({ size: 60 * 1024 }); 
 
 const { downloadVideo } = await import("../src/services/scraper.js");
 
