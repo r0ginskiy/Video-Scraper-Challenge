@@ -3,13 +3,12 @@ import fs from 'fs';
 import path from 'path';
 import { config } from '../src/config/index.js';
 
-// Создаем мок-функцию
+
 const downloadVideoMock = jest.fn();
 jest.unstable_mockModule('../src/services/scraper.js', () => ({
   downloadVideo: downloadVideoMock
 }));
 
-// Импортируем после моков
 const { scrapeVideos } = await import('../src/index.js');
 
 const tempMeta = path.join(process.cwd(), 'temp_meta_test');
